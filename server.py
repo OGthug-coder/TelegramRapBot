@@ -3,7 +3,7 @@ import os
 import logging
 
 from aiogram import Bot, Dispatcher, executor, types
-from request import get_lyrics, get_url
+from request import get_lyrics, get_urls
 
 
 API_TOKEN = os.environ["TELEGRAM_BOT_TOKEN"]
@@ -31,7 +31,9 @@ async def echo(message: types.Message):
     # await bot.send_message(message.chat.id, message.text)
     
     try:
-        await message.answer(get_lyrics(get_url(message.text)))
+        urls = get_urls(message.text)
+        await message.answer(get_lyrics(urls[0]))
+        await message.answer_photo(urls[1])
         print('OK:', message.text)
     except:
         await message.answer("Sorry, I can't find that song(")

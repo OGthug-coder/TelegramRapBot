@@ -4,6 +4,7 @@ import re
 import os
 from requests_html import HTMLSession
 
+
 def get_lyrics(url):
     session = HTMLSession()
     page = session.get(url)
@@ -20,8 +21,9 @@ base_url = "http://api.genius.com"
 headers = {'Authorization': 'Bearer ' + TOKEN}
 search_url = base_url + "/search"
 
-def get_url(query):
+def get_urls(query):
     params = {'q': query}
     response = requests.get(search_url, params=params, headers=headers).json()
-    url = response['response']['hits'][0]['result']['url']
-    return url
+    lyrics_url = response['response']['hits'][0]['result']['url']
+    img_url = response['response']['hits'][0]['result']['song_art_image_url']
+    return (lyrics_url, img_url)
