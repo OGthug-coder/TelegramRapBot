@@ -2,7 +2,7 @@ from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 
 
 def prepare_keyboard(data):
-    keyboard = InlineKeyboardMarkup()
+    keyboard = InlineKeyboardMarkup(row_width=1)
     buttons = []
     for title, url in data.items():
         buttons.append(InlineKeyboardButton(title, callback_data=url))

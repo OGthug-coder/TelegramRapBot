@@ -5,25 +5,46 @@ import os
 from requests_html import HTMLSession
 
 
+TOKEN = os.environ["GENIUS_TOKEN"]
+base_url = "http://api.genius.com"
+headers = {'Authorization': 'Bearer ' + TOKEN}
+search_url = base_url + "/search"
+
+
 def get_lyrics(url):
-    session = HTMLSession()
-    page = session.get(url)
-    html = BeautifulSoup(page.content, 'html.parser')
-    lyrics = html.find('div', class_='lyrics').get_text()
+
+    lyrics = None
+    while lyrics is None:
+        try:
+            session = HTMLSession()
+            page = session.get(url)
+            html = BeautifulSoup(page.content, 'html.parser')
+            lyrics = html.findAll("div", {"class": "lyrics"})[0].get_text()
+        except:
+            pass
+        
     #remove identifiers like chorus, verse, etc
     lyrics = re.sub(r'[\(\[].*?[\)\]]', '', lyrics)
     #remove empty lines
     lyrics = os.linesep.join([s for s in lyrics.splitlines() if s])         
     return lyrics
 
-TOKEN = os.environ["GENIUS_TOKEN"]
-base_url = "http://api.genius.com"
-headers = {'Authorization': 'Bearer ' + TOKEN}
-search_url = base_url + "/search"
-
 def get_urls(query):
     params = {'q': query}
     response = requests.get(search_url, params=params, headers=headers).json()
-    lyrics_url = response['response']['hits'][0]['result']['url']
-    img_url = response['response']['hits'][0]['result']['song_art_image_url']
-    return (lyrics_url, img_url)
+
+    data = {}
+    keyboard_data = {}
+    k = 0
+    for i in response['response']['hits']:
+        name = i['result']['full_title'].replace(u'\xa0', ' ')
+        keyboard_data[name] = k
+        url = i['result']['url']
+        image_url = i['result']['song_art_image_url']
+        data[k] = {
+            'url' : url,
+            'image_url' : image_url
+        }
+        k += 1
+
+    return data, keyboard_data

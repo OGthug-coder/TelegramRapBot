@@ -16,8 +16,12 @@ logging.basicConfig(level=logging.INFO)
 bot = Bot(token=API_TOKEN)
 dp = Dispatcher(bot)
 
+def split_on_two(stroke):
+    first = stroke[:4000]
+    second = stroke[4000:]
+    return first, second
 
-@dp.message_handler(commands=['start', 'help'])
+@dp.message_handler(commands=['start'])
 async def send_welcome(message: types.Message):
     """
     This handler will be called when user sends `/start` or `/help` command
@@ -26,26 +30,42 @@ async def send_welcome(message: types.Message):
     \nExample: Boulevard Depo OFMD")
 
 
+@dp.callback_query_handler(lambda c: True)
+async def process_callback(callback_query: types.CallbackQuery):
+    
+    key = int(callback_query.data)
+    url = data[key]['url']
+    image_url = data[key]['image_url']
+
+    try:
+        text = get_lyrics(url)
+        if len(text) > 4000:
+            first, second = split_on_two(text)
+            await bot.send_message(callback_query.from_user.id, first)
+            await bot.send_message(callback_query.from_user.id, second)
+
+        else:
+            await bot.send_message(callback_query.from_user.id, get_lyrics(url))
+
+        await bot.send_photo(callback_query.from_user.id, image_url)
+        print('OK:', url)
+
+    except:
+        await bot.send_message(callback_query.from_user.id, "Sorry, I can't scrap that song(")
+        print('FAIL:', url)
+
 @dp.message_handler()
 async def echo(message: types.Message):
-    # old style:
-    # await bot.send_message(message.chat.id, message.text)
-    
-    #try:
-    d = {
-        1 : 'a',
-        2 : 'b', 
-        3 : 'c'
-    }
-    keybkoard = prepare_keyboard(d)
-    urls = get_urls(message.text)
-    await message.answer(get_lyrics(urls[0]), reply_markup=keybkoard)
-    await message.answer_photo(urls[1])
-    print('OK:', message.text)
 
-    # except:
-    #     await message.answer("Sorry, I can't find that song(")
-    #     print('FAIL:', message.text)
+    global data, query
+    data, keyboard_data = get_urls(message.text)
+    keyboard = prepare_keyboard(keyboard_data)
+    query = message.text
+
+    if keyboard["inline_keyboard"] != []:
+        await message.answer(message.text, reply_markup=keyboard)
+    else:
+        await message.answer("Sorry, I can't find that song(")
 
 if __name__ == '__main__':
     executor.start_polling(dp, skip_updates=True)
