@@ -8,7 +8,8 @@ from bs4 import BeautifulSoup
 from requests_html import HTMLSession
 
 
-TOKEN = os.environ["GENIUS_TOKEN"]
+TOKEN = '9rt5dQe-trAD4-IyB-D0a8wwKCC6e9_zgecN-INNITdBuYpz6XxvoWSV6adGeNAA'
+# os.environ["GENIUS_TOKEN"]
 BASE_URL = "http://api.genius.com"
 headers = {'Authorization': 'Bearer ' + TOKEN}
 SEARCH_URL = BASE_URL + "/search"

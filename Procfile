@@ -1,3 +1,1 @@
-export GENIUS_TOKEN=9rt5dQe-trAD4-IyB-D0a8wwKCC6e9_zgecN-INNITdBuYpz6XxvoWSV6adGeNAA
-export TELEGRAM_BOT_TOKEN=1337211989:AAEjy17drLm_uuG-Zfcq-aRwOZ8nDRjCLK4
 web: python3 server.py
