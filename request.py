@@ -1,18 +1,23 @@
-import requests
-from bs4 import BeautifulSoup
+"""
+    That module contains methods of searching and parsing music
+"""
 import re
 import os
+import requests
+from bs4 import BeautifulSoup
 from requests_html import HTMLSession
 
 
 TOKEN = os.environ["GENIUS_TOKEN"]
-base_url = "http://api.genius.com"
+BASE_URL = "http://api.genius.com"
 headers = {'Authorization': 'Bearer ' + TOKEN}
-search_url = base_url + "/search"
+SEARCH_URL = BASE_URL + "/search"
 
 
 def get_lyrics(url):
-
+    """
+        Function that parsing lyrics by url
+    """
     lyrics = None
     while lyrics is None:
         try:
@@ -22,16 +27,19 @@ def get_lyrics(url):
             lyrics = html.findAll("div", {"class": "lyrics"})[0].get_text()
         except:
             pass
-        
+
     #remove identifiers like chorus, verse, etc
     lyrics = re.sub(r'[\(\[].*?[\)\]]', '', lyrics)
     #remove empty lines
-    lyrics = os.linesep.join([s for s in lyrics.splitlines() if s])         
+    lyrics = os.linesep.join([s for s in lyrics.splitlines() if s])
     return lyrics
 
 def get_urls(query):
+    """
+        Function that gets urls from search query
+    """
     params = {'q': query}
-    response = requests.get(search_url, params=params, headers=headers).json()
+    response = requests.get(SEARCH_URL, params=params, headers=headers).json()
 
     data = {}
     keyboard_data = {}
