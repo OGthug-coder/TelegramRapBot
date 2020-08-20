@@ -52,6 +52,7 @@ async def process_callback(callback_query: types.CallbackQuery):
 
     try:
         url = DATA[key]['url']
+        
     except exceptions.AsyncError:
         pass
 
