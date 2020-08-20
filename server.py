@@ -10,8 +10,7 @@ from request import get_lyrics, get_urls
 from keyboards import prepare_keyboard
 
 
-API_TOKEN = '1337211989:AAEjy17drLm_uuG-Zfcq-aRwOZ8nDRjCLK4'
-# os.environ["TELEGRAM_BOT_TOKEN"]
+API_TOKEN = os.environ["TELEGRAM_BOT_TOKEN"]
 
 # Configure logging
 logging.basicConfig(
