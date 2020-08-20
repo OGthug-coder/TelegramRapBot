@@ -52,7 +52,7 @@ async def process_callback(callback_query: types.CallbackQuery):
 
     try:
         url = DATA[key]['url']
-
+        
     except exceptions.AsyncError:
         pass
 
@@ -91,4 +91,4 @@ async def message_processing(message: types.Message):
         logging.info('No results found: %s', message.text)
 
 if __name__ == '__main__':
-    executor.start_polling(dp, skip_updates=True, timeout=50)
+    executor.start_polling(dp, skip_updates=True)
